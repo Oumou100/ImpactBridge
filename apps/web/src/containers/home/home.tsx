@@ -1,8 +1,28 @@
+﻿import { useHomeContent } from "@/hooks";
+import {
+  HomeActivitiesSection,
+  HomeHeroSection,
+  HomeMissionSection,
+  HomeServicesSection,
+  HomeStatsSection,
+} from "./sections";
 
 export const Home = () => {
-    return (
-        <>
-            <h1>Bienvenue sur ImpactBridge</h1>
-        </>
-    );
+  const {
+    featuredActivities,
+    heroImage,
+    impactStats,
+    missionImage,
+    ngoServices,
+  } = useHomeContent();
+
+  return (
+    <>
+      <HomeHeroSection heroImage={heroImage} />
+      <HomeStatsSection stats={impactStats} />
+      <HomeMissionSection missionImage={missionImage} />
+      <HomeServicesSection services={ngoServices} />
+      <HomeActivitiesSection activities={featuredActivities} />
+    </>
+  );
 };
