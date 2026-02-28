@@ -9,7 +9,7 @@ export const Spinner: React.FC<SpinnerProps> = ({ className }) => {
         <div
             className={`flex items-center justify-center m-auto w-24 h-24 text-[75px] ${className}`}
         >
-            <Image src="/icons/spinner.svg" alt="Loading" className="w-12 h-12" />
+            <Image src="/icons/spinner.svg" alt="Loading" width={12} height={12} />
         </div>
     );
 };
