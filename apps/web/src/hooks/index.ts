@@ -2,3 +2,4 @@
 export * from "./useInit";
 export * from "./entities";
 export * from "./home";
+export * from "./activities";

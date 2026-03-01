@@ -1,4 +1,5 @@
-﻿import { CtaButton } from "@/components";
+﻿import Image from "next/image";
+import { CtaButton } from "@/components";
 
 type HomeHeroSectionProps = {
   heroImage: string;
@@ -16,10 +17,13 @@ export const HomeHeroSection = ({ heroImage }: HomeHeroSectionProps) => {
   return (
     <section className="relative flex min-h-[88vh] items-center overflow-hidden">
       <div className="absolute inset-0">
-        <img
+        <Image
           src={heroImage}
           alt="Communautes soutenues par ImpactBridge"
-          className="h-full w-full scale-105 object-cover"
+          fill
+          sizes="100vw"
+          unoptimized
+          className="scale-105 object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/65 to-primary/25" />
       </div>

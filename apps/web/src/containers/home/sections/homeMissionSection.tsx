@@ -1,4 +1,5 @@
-﻿import { CtaButton } from "@/components";
+﻿import Image from "next/image";
+import { CtaButton } from "@/components";
 
 type HomeMissionSectionProps = {
   missionImage: string;
@@ -37,9 +38,12 @@ export const HomeMissionSection = ({ missionImage }: HomeMissionSectionProps) =>
 
         <div className="relative">
           <div className="overflow-hidden rounded-2xl border border-border card-shadow">
-            <img
+            <Image
               src={missionImage}
               alt="Enfants et enseignants soutenus par ImpactBridge"
+              width={1200}
+              height={1400}
+              unoptimized
               className="h-[420px] w-full object-cover md:h-[520px]"
               loading="lazy"
             />
