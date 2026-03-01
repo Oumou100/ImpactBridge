@@ -1,4 +1,5 @@
-﻿import type { ActivityItem } from "@/types";
+﻿import Image from "next/image";
+import type { ActivityItem } from "@/types";
 
 type ActivityCardProps = {
   item: ActivityItem;
@@ -8,9 +9,12 @@ export const ActivityCard = ({ item }: ActivityCardProps) => {
   return (
     <article className="overflow-hidden rounded-2xl border border-border bg-card card-shadow transition-all hover:-translate-y-1 hover:card-shadow-hover">
       <div className="aspect-[16/10] w-full overflow-hidden">
-        <img
+        <Image
           src={item.image}
           alt={item.title}
+          width={1200}
+          height={750}
+          unoptimized
           className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
           loading="lazy"
         />
