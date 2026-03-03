@@ -1,13 +1,23 @@
 {
   "name": "ImpactBridge",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "private": true,
+  "description": "ImpactBridge monorepo",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:web": "pnpm --filter impact-bridge-web dev",
+    "dev:api": "pnpm --filter impact-bridge-api dev",
+    "build:web": "pnpm --filter impact-bridge-web build",
+    "build:api": "pnpm --filter impact-bridge-api build",
+    "test:api": "pnpm --filter impact-bridge-api test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "keywords": [
+    "impactbridge",
+    "nextjs",
+    "express",
+    "postgresql",
+    "prisma"
+  ],
+  "author": "ImpactBridge",
+  "license": "MIT",
   "packageManager": "pnpm@10.16.1"
 }
