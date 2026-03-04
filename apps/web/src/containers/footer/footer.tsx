@@ -17,14 +17,6 @@ const ArrowIcon = () => {
   );
 };
 
-const HeartIcon = () => {
-  return (
-    <svg viewBox="0 0 24 24" className="h-3 w-3" fill="currentColor" stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z" />
-    </svg>
-  );
-};
-
 const MailIcon = () => {
   return (
     <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
