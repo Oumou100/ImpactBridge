@@ -7,7 +7,7 @@ export const swaggerSpec = swaggerJsdoc({
     info: {
       title: "ImpactBridge API",
       version: "1.0.0",
-      description: "Authentication and activities endpoints documentation for ImpactBridge API",
+      description: "Authentication, activities and contacts endpoints documentation for ImpactBridge API",
     },
     servers: [{ url: `http://localhost:${env.PORT}${env.API_PREFIX}` }],
     components: {
@@ -199,6 +199,115 @@ export const swaggerSpec = swaggerJsdoc({
                 totalPages: { type: "integer" },
               },
             },
+          },
+        },
+        CreateContactBody: {
+          type: "object",
+          required: ["name", "email", "subject", "message"],
+          properties: {
+            name: {
+              type: "string",
+              minLength: 2,
+              maxLength: 100,
+              example: "Aicha Benali",
+              description: "Obligatoire",
+            },
+            email: {
+              type: "string",
+              format: "email",
+              maxLength: 255,
+              example: "aicha@example.com",
+              description: "Obligatoire",
+            },
+            subject: {
+              type: "string",
+              minLength: 3,
+              maxLength: 200,
+              example: "Demande de partenariat",
+              description: "Obligatoire",
+            },
+            message: {
+              type: "string",
+              minLength: 10,
+              maxLength: 2000,
+              example: "Bonjour, je souhaite proposer un partenariat local.",
+              description: "Obligatoire",
+            },
+            website: {
+              type: "string",
+              maxLength: 200,
+              example: "",
+              description: "Optionnel (honeypot, laisser vide)",
+            },
+          },
+        },
+        ContactStatusUpdateBody: {
+          type: "object",
+          required: ["status"],
+          properties: {
+            status: {
+              type: "string",
+              enum: ["NEW", "READ", "ARCHIVED"],
+              description: "Obligatoire",
+            },
+          },
+        },
+        ContactItem: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            name: { type: "string" },
+            email: { type: "string", format: "email" },
+            subject: { type: "string" },
+            message: { type: "string" },
+            status: { type: "string", enum: ["NEW", "READ", "ARCHIVED"] },
+            createdAt: { type: "string", format: "date-time" },
+            updatedAt: { type: "string", format: "date-time" },
+          },
+        },
+        ContactCreatedResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: {
+              type: "string",
+              example: "Message de contact envoye avec succes",
+            },
+            data: {
+              type: "object",
+              properties: {
+                message: { type: "string", example: "Votre message a ete envoye avec succes." },
+                id: { type: "string", format: "uuid" },
+              },
+            },
+          },
+        },
+        ContactsListResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: { type: "string", example: "Messages de contact recuperes" },
+            data: {
+              type: "array",
+              items: { $ref: "#/components/schemas/ContactItem" },
+            },
+            meta: {
+              type: "object",
+              properties: {
+                page: { type: "integer", example: 1 },
+                limit: { type: "integer", example: 10 },
+                total: { type: "integer", example: 57 },
+                totalPages: { type: "integer", example: 6 },
+              },
+            },
+          },
+        },
+        ContactStatusUpdatedResponse: {
+          type: "object",
+          properties: {
+            success: { type: "boolean", example: true },
+            message: { type: "string", example: "Statut du message mis a jour" },
+            data: { $ref: "#/components/schemas/ContactItem" },
           },
         },
       },
@@ -444,6 +553,134 @@ export const swaggerSpec = swaggerJsdoc({
           parameters: [{ in: "path", name: "id", required: true, schema: { type: "string", format: "uuid" } }],
           responses: {
             "204": { description: "Deleted" },
+          },
+        },
+      },
+      "/contact": {
+        post: {
+          tags: ["Contacts"],
+          summary: "Submit a contact message",
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/CreateContactBody" },
+              },
+            },
+          },
+          responses: {
+            "201": {
+              description: "Contact message stored and notification sent",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ContactCreatedResponse" } },
+              },
+            },
+            "422": {
+              description: "Validation error",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
+            "429": {
+              description: "Rate limit exceeded",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
+          },
+        },
+      },
+      "/admin/contacts": {
+        get: {
+          tags: ["Contacts Admin"],
+          summary: "List contact messages (admin)",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "query",
+              name: "page",
+              required: false,
+              schema: { type: "integer", minimum: 1 },
+              description: "Optionnel (defaut: 1)",
+            },
+            {
+              in: "query",
+              name: "limit",
+              required: false,
+              schema: { type: "integer", minimum: 1, maximum: 50 },
+              description: "Optionnel (defaut: 10)",
+            },
+            {
+              in: "query",
+              name: "status",
+              required: false,
+              schema: { type: "string", enum: ["NEW", "READ", "ARCHIVED"] },
+              description: "Optionnel",
+            },
+          ],
+          responses: {
+            "200": {
+              description: "Contact messages fetched",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ContactsListResponse" } },
+              },
+            },
+            "401": {
+              description: "Unauthorized",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
+          },
+        },
+      },
+      "/admin/contacts/{id}/status": {
+        patch: {
+          tags: ["Contacts Admin"],
+          summary: "Update contact status",
+          security: [{ bearerAuth: [] }],
+          parameters: [
+            {
+              in: "path",
+              name: "id",
+              required: true,
+              schema: { type: "string", format: "uuid" },
+              description: "Obligatoire",
+            },
+          ],
+          requestBody: {
+            required: true,
+            content: {
+              "application/json": {
+                schema: { $ref: "#/components/schemas/ContactStatusUpdateBody" },
+              },
+            },
+          },
+          responses: {
+            "200": {
+              description: "Contact status updated",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ContactStatusUpdatedResponse" } },
+              },
+            },
+            "401": {
+              description: "Unauthorized",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
+            "404": {
+              description: "Contact message not found",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
+            "422": {
+              description: "Validation error",
+              content: {
+                "application/json": { schema: { $ref: "#/components/schemas/ApiError" } },
+              },
+            },
           },
         },
       },

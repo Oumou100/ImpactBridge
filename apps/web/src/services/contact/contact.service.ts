@@ -3,7 +3,10 @@ import type { ContactApiResponse, ContactPayload } from "@/types";
 export const sendContactMessage = async (
   payload: ContactPayload,
 ): Promise<ContactApiResponse> => {
-  const response = await fetch("/api/contact", {
+  const base = process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "");
+  const endpoint = base ? `${base}/contact` : "/api/contact";
+
+  const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

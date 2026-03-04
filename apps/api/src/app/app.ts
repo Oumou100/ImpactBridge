@@ -8,10 +8,21 @@ import { swaggerSpec } from "@/docs/swagger";
 import { notFoundHandler, errorHandler } from "@/app/middlewares/error-handler";
 import {
   authRateLimit,
+  contactRateLimit,
   globalRateLimit,
 } from "@/app/middlewares/rate-limit";
+import { requireAdmin } from "@/app/middlewares/auth";
 import { healthRouter } from "@/modules/health/health.route";
-
+import {
+  activitiesAdminRouter,
+  activitiesPublicRouter,
+} from "@/modules/activities/activity.route";
+import { authRouter } from "@/modules/auth/auth.route";
+import {
+  contactsAdminRouter,
+  contactsPublicRouter,
+} from "@/modules/contacts/contact.route";
+import { uploadsRouter } from "@/modules/uploads/upload.route";
 
 export const createApp = () => {
   const app = express();
@@ -31,6 +42,16 @@ export const createApp = () => {
   app.use(env.API_PREFIX, healthRouter);
 
   app.use(`${env.API_PREFIX}/admin/auth`, authRateLimit);
+  app.use(`${env.API_PREFIX}/contact`, contactRateLimit);
+
+  app.use(`${env.API_PREFIX}/admin`, authRouter);
+  app.use(env.API_PREFIX, activitiesPublicRouter);
+  app.use(env.API_PREFIX, contactsPublicRouter);
+
+  app.use(env.API_PREFIX + "/admin", requireAdmin);
+  app.use(env.API_PREFIX + "/admin", activitiesAdminRouter);
+  app.use(env.API_PREFIX + "/admin", contactsAdminRouter);
+  app.use(env.API_PREFIX + "/admin", uploadsRouter);
 
   app.use(notFoundHandler);
   app.use(errorHandler);
