@@ -1,7 +1,7 @@
 export type ApiSuccessResponse<T> = {
   success: true;
   message: string;
-  data: T;
+  data?: T;
   meta?: Record<string, unknown>;
 };
 
