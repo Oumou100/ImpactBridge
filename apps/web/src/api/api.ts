@@ -1,68 +1,125 @@
-import axios from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import Cookies from "js-cookie";
 
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_BASE_URL?.replace(/\/$/, "") ?? "http://localhost:4000/v1";
+
+const ACCESS_TOKEN_KEY = "ib_access_token";
+const REFRESH_TOKEN_KEY = "ib_refresh_token";
+
 export const apiClient = axios.create({
-    baseURL: "/api",
-    headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-    },
-    withCredentials: true,
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+  },
+  withCredentials: false,
 });
 
-apiClient.interceptors.request.use(
-    async (config) => {
-        const token = Cookies.get("authToken");
+type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 
-        if (config.data instanceof FormData) {
-            delete config.headers["Content-Type"];
-        } else {
-            config.headers["Content-Type"] = "application/json";
-        }
+let refreshingPromise: Promise<string | null> | null = null;
 
-        if (token) config.headers["Authorization"] = `Bearer ${token}`;
+const persistAccessToken = (token: string) => {
+  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 1, sameSite: "strict" });
+};
 
-        try {
-            const schoolContextStorage = localStorage.getItem(
-                "school-context-storage",
-            );
-            if (schoolContextStorage) {
-                const { state } = JSON.parse(schoolContextStorage);
-                const selectedSchoolId = state?.selectedSchoolId;
+const clearAuthCookies = () => {
+  Cookies.remove(ACCESS_TOKEN_KEY);
+  Cookies.remove(REFRESH_TOKEN_KEY);
+};
 
-                if (selectedSchoolId !== null && selectedSchoolId !== undefined) {
-                    config.headers["X-School-Id"] = String(selectedSchoolId);
-                }
-            }
-        } catch (error) {
-            console.warn("Erreur lors de la récupération du contexte école:", error);
-        }
+const refreshAccessToken = async (): Promise<string | null> => {
+  const refreshToken = Cookies.get(REFRESH_TOKEN_KEY);
 
-        let csrfToken = Cookies.get("XSRF-TOKEN");
+  if (!refreshToken) {
+    return null;
+  }
 
-        if (!csrfToken) {
-            await axios.get("/sanctum/csrf-cookie", { withCredentials: true });
-            csrfToken = Cookies.get("XSRF-TOKEN");
-        }
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/admin/auth/refresh`,
+      { refreshToken },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      },
+    );
 
-        if (csrfToken)
-            config.headers["X-XSRF-TOKEN"] = decodeURIComponent(csrfToken);
+    const nextToken = response.data?.data?.accessToken as string | undefined;
+    const nextRefresh = response.data?.data?.refreshToken as string | undefined;
 
-        return config;
-    },
-    (error) => Promise.reject(error),
-);
+    if (!nextToken || !nextRefresh) {
+      clearAuthCookies();
+      return null;
+    }
+
+    persistAccessToken(nextToken);
+    Cookies.set(REFRESH_TOKEN_KEY, nextRefresh, { expires: 7, sameSite: "strict" });
+
+    return nextToken;
+  } catch {
+    clearAuthCookies();
+    return null;
+  }
+};
+
+apiClient.interceptors.request.use((config) => {
+  const token = Cookies.get(ACCESS_TOKEN_KEY);
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  if (config.data instanceof FormData) {
+    delete config.headers["Content-Type"];
+  } else if (!config.headers["Content-Type"]) {
+    config.headers["Content-Type"] = "application/json";
+  }
+
+  return config;
+});
 
 apiClient.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-        if (error.response?.status === 401) {
-            Cookies.remove("authToken");
-            localStorage?.removeItem("customerId");
-            // if (typeof window !== "undefined") {
-            // window.location.href = "/connexion";
-            // }
-        }
-        return Promise.reject(error);
-    },
+  (response) => response,
+  async (error: AxiosError) => {
+    const config = error.config as RetriableConfig | undefined;
+
+    if (!config || error.response?.status !== 401 || config._retry) {
+      return Promise.reject(error);
+    }
+
+    if (
+      typeof config.url === "string" &&
+      (config.url.includes("/admin/auth/login") || config.url.includes("/admin/auth/refresh"))
+    ) {
+      return Promise.reject(error);
+    }
+
+    config._retry = true;
+
+    if (!refreshingPromise) {
+      refreshingPromise = refreshAccessToken().finally(() => {
+        refreshingPromise = null;
+      });
+    }
+
+    const nextToken = await refreshingPromise;
+
+    if (!nextToken) {
+      return Promise.reject(error);
+    }
+
+    config.headers = config.headers ?? {};
+    config.headers.Authorization = `Bearer ${nextToken}`;
+
+    return apiClient(config);
+  },
 );
+
+export const authCookieKeys = {
+  access: ACCESS_TOKEN_KEY,
+  refresh: REFRESH_TOKEN_KEY,
+} as const;
