@@ -1,4 +1,5 @@
-﻿import { prisma } from "@/core/db/prisma";
+import type { ContactMessageStatus } from "@impact-bridge/shared";
+import { prisma } from "@/core/db/prisma";
 import { sendContactNotification } from "@/core/mail/mailer";
 import { AppError } from "@/app/middlewares/error-handler";
 
@@ -37,7 +38,7 @@ export const submitContact = async (payload: {
 export const listContacts = async (input: {
   page: number;
   limit: number;
-  status?: "NEW" | "READ" | "ARCHIVED";
+  status?: ContactMessageStatus;
 }) => {
   const skip = (input.page - 1) * input.limit;
   const where = input.status ? { status: input.status } : {};
@@ -65,7 +66,7 @@ export const listContacts = async (input: {
 
 export const updateContactStatus = async (
   id: string,
-  status: "NEW" | "READ" | "ARCHIVED",
+  status: ContactMessageStatus,
 ) => {
   const exists = await prisma.contactMessage.findUnique({ where: { id } });
 

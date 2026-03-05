@@ -1,4 +1,5 @@
 import { Router } from "express";
+import type { AdminUser } from "@impact-bridge/shared";
 import { validateBody } from "@/app/middlewares/validate";
 import { requireAdmin } from "@/app/middlewares/auth";
 import { prisma } from "@/core/db/prisma";
@@ -47,7 +48,7 @@ authRouter.get("/me", requireAdmin, async (req, res, next) => {
       select: { id: true, email: true, role: true, isActive: true, lastLoginAt: true },
     });
 
-    return ok(res, "Profil admin recupere", admin);
+    return ok(res, "Profil admin recupere", admin as AdminUser | null);
   } catch (error) {
     next(error);
   }

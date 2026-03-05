@@ -3,12 +3,8 @@ export const ROUTES = {
   ACTIVITIES: "/activites",
   SERVICES: "/services",
   CONTACT: "/contact",
-  ADMIN: "/administration",
-  LOGIN: "/connexion",
-  REGISTER: "/inscription",
-  FORGOT_PASSWORD: "/mot-de-passe-oublie",
-  VERIFICATION: "/verification",
-  RESET_PASSWORD: "/reinitialiser-mot-de-passe",
+  ADMIN_DASHBOARD: "/admin",
+  ADMIN_LOGIN: "/admin/login",
 } as const;
 
 export type RoutePath = (typeof ROUTES)[keyof typeof ROUTES];

@@ -1,4 +1,5 @@
-﻿import bcrypt from "bcryptjs";
+import bcrypt from "bcryptjs";
+import type { AuthLoginPayload, AuthTokens } from "@impact-bridge/shared";
 import { prisma } from "@/core/db/prisma";
 import { AppError } from "@/app/middlewares/error-handler";
 import {
@@ -27,7 +28,10 @@ const parseRefreshExpiry = () => {
 
 const refreshDurationMs = parseRefreshExpiry();
 
-export const loginAdmin = async (email: string, password: string) => {
+export const loginAdmin = async (
+  email: string,
+  password: string,
+): Promise<AuthLoginPayload> => {
   const admin = await prisma.admin.findUnique({ where: { email } });
 
   if (!admin || !admin.isActive) {
@@ -67,7 +71,7 @@ export const loginAdmin = async (email: string, password: string) => {
   };
 };
 
-export const refreshAdminToken = async (token: string) => {
+export const refreshAdminToken = async (token: string): Promise<AuthTokens> => {
   const payload = verifyRefreshToken(token);
 
   if (payload.typ !== "refresh" || !payload.sub) {
