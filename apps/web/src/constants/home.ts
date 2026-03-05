@@ -1,9 +1,4 @@
-﻿import type {
-  ActivityItem,
-  NavigationItem,
-  ServiceItem,
-  StatItem,
-} from "@/types";
+import type { NavigationItem, ServiceItem, StatItem } from "@/types";
 
 export const navItems: NavigationItem[] = [
   { label: "Accueil", href: "/" },
@@ -39,35 +34,6 @@ export const ngoServices: ServiceItem[] = [
     icon: "community",
   },
 ];
-
-export const featuredActivities: ActivityItem[] = [
-  {
-    title: "Plantation communautaire a Dakar",
-    description:
-      "500 arbres plantes avec la communaute locale pour lutter contre la deforestation.",
-    date: "15 Janvier 2026",
-    image:
-      "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?w=1200&h=800&fit=crop",
-  },
-  {
-    title: "Distribution alimentaire a Lyon",
-    description:
-      "Aide directe a 200 familles dans le besoin avec des paniers alimentaires complets.",
-    date: "28 Decembre 2025",
-    image:
-      "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=1200&h=800&fit=crop",
-  },
-  {
-    title: "Formation professionnelle a Abidjan",
-    description:
-      "Programme de competences numeriques pour 50 jeunes entrepreneurs.",
-    date: "10 Novembre 2025",
-    image:
-      "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?w=1200&h=800&fit=crop",
-  },
-];
-
-
 
 export const missionImage =
   "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=1400&fit=crop";
