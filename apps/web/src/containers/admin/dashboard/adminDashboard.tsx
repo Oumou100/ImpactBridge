@@ -2,14 +2,13 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ContactMessage } from "@impact-bridge/shared";
 import { AdminStatCard, PublishBadge, StatusBadge } from "@/components";
 import { ROUTES } from "@/constants";
 import { useAuth } from "@/hooks";
 import { useAdminAuthStore } from "@/stores";
-import { fetchAdminMe } from "@/services/auth";
 import { activityPrograms } from "@/constants/activities";
 
 const ActivityIcon = () => (
@@ -99,21 +98,30 @@ const RECENT_MESSAGES: ContactMessage[] = [
 
 export const AdminDashboard = () => {
   const router = useRouter();
-  const { logout } = useAuth();
-  const { admin, setAdmin } = useAdminAuthStore();
+  const { logout, loadAdminProfile } = useAuth();
+  const { admin } = useAdminAuthStore();
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const hasHandledSessionExpiry = useRef(false);
 
   useEffect(() => {
+    if (admin) {
+      setLoading(false);
+      return;
+    }
+
     const load = async () => {
       try {
-        const profile = await fetchAdminMe();
-        setAdmin(profile);
+        await loadAdminProfile();
       } catch (error) {
         const message =
           error instanceof Error ? error.message : "Impossible de charger le profil admin.";
 
-        if (message.toLowerCase().includes("session expiree")) {
+        if (
+          message.toLowerCase().includes("session expiree") &&
+          !hasHandledSessionExpiry.current
+        ) {
+          hasHandledSessionExpiry.current = true;
           await logout();
           router.replace(ROUTES.ADMIN_LOGIN);
           return;
@@ -126,7 +134,7 @@ export const AdminDashboard = () => {
     };
 
     void load();
-  }, [logout, router, setAdmin]);
+  }, [admin, loadAdminProfile, logout, router]);
 
   const recentActivities = useMemo<RecentActivity[]>(
     () =>

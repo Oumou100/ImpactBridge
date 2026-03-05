@@ -22,13 +22,6 @@ export const proxy = (request: NextRequest) => {
     return NextResponse.redirect(url);
   }
 
-  if (accessToken && isLoginRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = ADMIN_PREFIX;
-    url.searchParams.delete("redirect");
-    return NextResponse.redirect(url);
-  }
-
   return NextResponse.next();
 };
 
