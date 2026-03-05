@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminActivityEdit } from "@/containers";
+import { AdminActivityUpsert } from "@/containers";
 
 type AdminActivitiesEditPageProps = {
   params: Promise<{ id: string }>;
@@ -19,7 +19,7 @@ export default async function AdminActivitiesEditPage({ params }: AdminActivitie
 
   return (
     <section className="mx-auto w-full max-w-7xl px-4 py-8 md:px-6">
-      <AdminActivityEdit id={id} />
+      <AdminActivityUpsert mode="edit" id={id} />
     </section>
   );
 }
