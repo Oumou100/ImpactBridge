@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@impact-bridge/shared": "workspace:*",
     "@tanstack/react-query": "^5.90.21",
     "axios": "^1.13.6",
     "js-cookie": "^3.0.5",
