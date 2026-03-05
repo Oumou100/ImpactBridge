@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Footer, Header } from "@/containers";
 import { Spinner } from "@/components/common";
 import { usePathname } from "next/navigation";
+import { ROUTES } from "@/constants";
 
 const Main = React.forwardRef<HTMLElement, React.PropsWithChildren>(
     ({ children }, ref) => {
@@ -25,21 +26,9 @@ export const Body: React.FC<BodyProps> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        // Hide header and footer in these routes
-        const routesToHide = [
-            "/connexion",
-            "/inscription",
-            "/mot-de-passe-oublie",
-            "/verification",
-            "/reinitialiser-mot-de-passe",
-            "/administration",
-        ];
-
-        const adminRoutes = ["/administration"];
-
         const shouldHide =
-            routesToHide.includes(pathname) ||
-            adminRoutes.some((route) => pathname.startsWith(route));
+            pathname === ROUTES.ADMIN_LOGIN ||
+            pathname.startsWith(ROUTES.ADMIN_DASHBOARD);
 
         setShowHeaderFooter(!shouldHide);
     }, [pathname]);

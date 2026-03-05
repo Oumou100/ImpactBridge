@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { navItems } from "@/constants";
+import { navItems, ROUTES } from "@/constants";
 
 const MenuIcon = () => {
   return (
@@ -100,7 +100,7 @@ export const Header = () => {
 
           <div className="ml-4 flex items-center gap-2">
             <Link
-              href="/administration"
+              href={ROUTES.ADMIN_LOGIN}
               className="rounded-lg px-3 py-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
             >
               Admin
@@ -161,7 +161,7 @@ export const Header = () => {
 
           <div className="flex gap-2 pt-3">
             <Link
-              href="/administration"
+              href={ROUTES.ADMIN_LOGIN}
               onClick={() => setIsOpen(false)}
               className="flex-1 rounded-lg border border-border px-4 py-2.5 text-center text-sm font-medium text-foreground"
             >
