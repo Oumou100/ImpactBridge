@@ -3,3 +3,4 @@ export * from "./activitiesKpisSection";
 export * from "./activitiesProgramsSection";
 export * from "./activitiesFeedSection";
 export * from "./activitiesMilestonesSection";
+export * from "./publicActivitiesHeroSection";
