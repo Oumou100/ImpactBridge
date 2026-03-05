@@ -1,12 +1,7 @@
 import { Response } from "express";
+import type { ApiErrorResponse, ApiSuccessResponse } from "@impact-bridge/shared";
 
-type ApiResponseShape<T> = {
-  success: boolean;
-  message: string;
-  data?: T;
-  meta?: Record<string, unknown>;
-  errors?: unknown;
-};
+type ApiResponseShape<T> = ApiSuccessResponse<T> | ApiErrorResponse;
 
 export const ok = <T>(
   res: Response,
