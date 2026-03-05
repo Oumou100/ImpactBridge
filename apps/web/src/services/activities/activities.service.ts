@@ -21,6 +21,7 @@ export type AdminActivityFormInput = {
   location: string;
   activityDate: string;
   coverImageUrl: string;
+  coverImagePublicId: string;
   isPublished: boolean;
 };
 
@@ -58,6 +59,7 @@ const mapFormToApiPayload = (form: AdminActivityFormInput) => {
     location: form.location.trim() || null,
     activityDate: activityDateIso,
     coverImageUrl: form.coverImageUrl.trim() || null,
+    coverImagePublicId: form.coverImagePublicId.trim() || null,
     isPublished: form.isPublished,
   };
 };

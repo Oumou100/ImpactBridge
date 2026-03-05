@@ -1,8 +1,10 @@
 "use client";
 
-import { type FormEvent, useMemo, useState } from "react";
+import Image from "next/image";
+import { type ChangeEvent, type FormEvent, useMemo, useState } from "react";
 import type { Activity } from "@impact-bridge/shared";
 import type { AdminActivityFormInput } from "@/services/activities";
+import { uploadActivityImage } from "@/services/uploads";
 
 type AdminActivityFormProps = {
   initialValue?: Activity;
@@ -32,8 +34,12 @@ const getInitialForm = (activity?: Activity): AdminActivityFormInput => ({
   location: activity?.location ?? "",
   activityDate: toDateInputValue(activity?.activityDate),
   coverImageUrl: activity?.coverImageUrl ?? "",
+  coverImagePublicId: activity?.coverImagePublicId ?? "",
   isPublished: Boolean(activity?.isPublished),
 });
+
+const ACCEPTED_MIME_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_IMAGE_SIZE_BYTES = 5 * 1024 * 1024;
 
 export const AdminActivityForm = ({
   initialValue,
@@ -44,6 +50,8 @@ export const AdminActivityForm = ({
 }: AdminActivityFormProps) => {
   const [form, setForm] = useState<AdminActivityFormInput>(() => getInitialForm(initialValue));
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const titleCount = useMemo(() => form.title.trim().length, [form.title]);
   const descriptionCount = useMemo(() => form.description.trim().length, [form.description]);
@@ -78,6 +86,47 @@ export const AdminActivityForm = ({
     }
 
     await onSubmit(form);
+  };
+
+  const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0];
+    event.target.value = "";
+
+    if (!selectedFile) {
+      return;
+    }
+
+    setErrorMessage(null);
+    setUploadMessage(null);
+
+    if (!ACCEPTED_MIME_TYPES.includes(selectedFile.type)) {
+      setErrorMessage("Format invalide. Utilisez JPG, PNG ou WEBP.");
+      return;
+    }
+
+    if (selectedFile.size > MAX_IMAGE_SIZE_BYTES) {
+      setErrorMessage("Image trop volumineuse. Taille max: 5 MB.");
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const uploaded = await uploadActivityImage(selectedFile);
+      setForm((previous) => ({
+        ...previous,
+        coverImageUrl: uploaded.url,
+        coverImagePublicId: uploaded.publicId,
+      }));
+      setUploadMessage("Image telechargee avec succes.");
+    } catch (uploadError) {
+      setErrorMessage(
+        uploadError instanceof Error
+          ? uploadError.message
+          : "Echec de l upload de l image. Veuillez reessayer.",
+      );
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   return (
@@ -174,6 +223,66 @@ export const AdminActivityForm = ({
           className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none ring-primary/30 transition focus:ring-2"
           placeholder="https://..."
         />
+        <p className="text-xs text-muted-foreground">
+          Vous pouvez coller une URL ou envoyer une image ci-dessous.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <label htmlFor="activity-cover-file" className="text-sm font-semibold">
+          Upload image
+        </label>
+        <input
+          id="activity-cover-file"
+          type="file"
+          accept="image/jpeg,image/png,image/webp"
+          onChange={handleUpload}
+          disabled={isUploading || isSubmitting}
+          className="block w-full text-sm file:mr-3 file:rounded-md file:border file:border-border file:bg-muted file:px-3 file:py-2 file:text-sm file:font-medium file:text-foreground hover:file:bg-muted/80"
+        />
+        <p className="text-xs text-muted-foreground">Formats: JPG, PNG, WEBP (max 5 MB).</p>
+      </div>
+
+      {form.coverImageUrl ? (
+        <div className="space-y-2 rounded-lg border border-border p-3">
+          <p className="text-xs font-medium text-muted-foreground">Apercu image</p>
+          <div className="relative h-44 w-full overflow-hidden rounded-md sm:h-56">
+            <Image
+              src={form.coverImageUrl}
+              alt="Apercu image de couverture"
+              fill
+              sizes="(max-width: 640px) 100vw, 672px"
+              className="object-cover"
+            />
+          </div>
+        </div>
+      ) : null}
+
+      {uploadMessage ? (
+        <p className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
+          {uploadMessage}
+        </p>
+      ) : null}
+
+      {isUploading ? (
+        <p className="text-sm text-muted-foreground">Upload en cours...</p>
+      ) : null}
+
+      <div className="space-y-2">
+        <label htmlFor="activity-cover-public-id" className="text-sm font-semibold">
+          Public ID image
+        </label>
+        <input
+          id="activity-cover-public-id"
+          type="text"
+          value={form.coverImagePublicId}
+          onChange={(event) => updateField("coverImagePublicId", event.target.value)}
+          className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm outline-none ring-primary/30 transition focus:ring-2"
+          placeholder="impactbridge/activities/..."
+        />
+        <p className="text-xs text-muted-foreground">
+          Rempli automatiquement apres upload.
+        </p>
       </div>
 
       <label className="flex items-center gap-3 rounded-lg border border-border p-4">
@@ -200,7 +309,7 @@ export const AdminActivityForm = ({
       <div className="flex flex-wrap gap-3">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || isUploading}
           className="inline-flex h-10 items-center justify-center rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Enregistrement..." : submitLabel}
