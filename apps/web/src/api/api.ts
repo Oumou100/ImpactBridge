@@ -21,12 +21,12 @@ type RetriableConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 let refreshingPromise: Promise<string | null> | null = null;
 
 const persistAccessToken = (token: string) => {
-  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 1, sameSite: "strict" });
+  Cookies.set(ACCESS_TOKEN_KEY, token, { expires: 1, sameSite: "strict", path: "/" });
 };
 
 const clearAuthCookies = () => {
-  Cookies.remove(ACCESS_TOKEN_KEY);
-  Cookies.remove(REFRESH_TOKEN_KEY);
+  Cookies.remove(ACCESS_TOKEN_KEY, { path: "/" });
+  Cookies.remove(REFRESH_TOKEN_KEY, { path: "/" });
 };
 
 const refreshAccessToken = async (): Promise<string | null> => {
@@ -57,7 +57,11 @@ const refreshAccessToken = async (): Promise<string | null> => {
     }
 
     persistAccessToken(nextToken);
-    Cookies.set(REFRESH_TOKEN_KEY, nextRefresh, { expires: 7, sameSite: "strict" });
+    Cookies.set(REFRESH_TOKEN_KEY, nextRefresh, {
+      expires: 7,
+      sameSite: "strict",
+      path: "/",
+    });
 
     return nextToken;
   } catch {

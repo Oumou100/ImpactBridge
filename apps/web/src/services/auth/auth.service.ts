@@ -22,6 +22,10 @@ export const loginAdmin = async (
       throw new Error(response.data.message || "Echec de connexion.");
     }
 
+    if (!response.data.data) {
+      throw new Error("Reponse de connexion invalide.");
+    }
+
     return response.data.data;
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -53,6 +57,10 @@ export const refreshAdminSession = async (
     throw new Error(response.data.message || "Echec de rafraichissement.");
   }
 
+  if (!response.data.data) {
+    throw new Error("Reponse de rafraichissement invalide.");
+  }
+
   return response.data.data;
 };
 
@@ -66,6 +74,10 @@ export const fetchAdminMe = async (): Promise<AdminUser> => {
 
     if (!response.data.success) {
       throw new Error(response.data.message || "Impossible de recuperer le profil admin.");
+    }
+
+    if (!response.data.data) {
+      throw new Error("Profil admin introuvable.");
     }
 
     return response.data.data;
