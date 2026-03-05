@@ -207,8 +207,7 @@ export const AdminDashboard = () => {
   };
 
   return (
-    <section className="min-h-screen bg-muted/30 px-4 py-8 md:px-6">
-      <div className="mx-auto w-full max-w-6xl space-y-8">
+    <section className="mx-auto w-full max-w-6xl space-y-8">
         <header className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 md:flex-row md:items-center md:justify-between">
           <div>
             <h1 className="font-display text-2xl font-bold md:text-3xl">Tableau de bord</h1>
@@ -262,7 +261,7 @@ export const AdminDashboard = () => {
             <div className="flex items-center justify-between border-b border-border p-5">
               <h2 className="font-semibold">Activites recentes</h2>
               <Link
-                href={`${ROUTES.ADMIN_DASHBOARD}/activites`}
+                href={ROUTES.ADMIN_ACTIVITIES}
                 className="text-xs font-medium text-primary transition hover:underline"
               >
                 Voir tout
@@ -294,7 +293,7 @@ export const AdminDashboard = () => {
             <div className="flex items-center justify-between border-b border-border p-5">
               <h2 className="font-semibold">Messages recents</h2>
               <Link
-                href={`${ROUTES.ADMIN_DASHBOARD}/contacts`}
+                href={ROUTES.ADMIN_CONTACTS}
                 className="text-xs font-medium text-primary transition hover:underline"
               >
                 Voir tout
@@ -318,7 +317,6 @@ export const AdminDashboard = () => {
             </div>
           </section>
         </div>
-      </div>
     </section>
   );
 };
