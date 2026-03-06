@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { ROUTES } from "@/constants";
 
 const ACCESS_COOKIE = "ib_access_token";
 const LOGIN_PATH = "/admin/login";
@@ -13,6 +14,13 @@ export const proxy = (request: NextRequest) => {
 
   if (!isAdminRoute) {
     return NextResponse.next();
+  }
+
+  if (accessToken && isLoginRoute) {
+    const url = request.nextUrl.clone();
+    url.pathname = ROUTES.ADMIN_DASHBOARD;
+    url.search = "";
+    return NextResponse.redirect(url);
   }
 
   if (!accessToken && !isLoginRoute) {

@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import Image from "next/image";
+import { FormEvent, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import type { AdminLoginCredentials } from "@impact-bridge/shared";
@@ -12,7 +13,7 @@ type FormErrors = Partial<Record<keyof AdminLoginCredentials, string>>;
 export const AdminLogin = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login } = useAuth();
+  const { checkIsUserLoggedIn, login } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
@@ -21,6 +22,17 @@ export const AdminLogin = () => {
     password: "",
   });
   const [errors, setErrors] = useState<FormErrors>({});
+
+  useEffect(() => {
+    const syncSession = async () => {
+      const isLoggedIn = await checkIsUserLoggedIn();
+      if (isLoggedIn) {
+        router.replace(ROUTES.ADMIN_DASHBOARD);
+      }
+    };
+
+    void syncSession();
+  }, [checkIsUserLoggedIn, router]);
 
   const validate = () => {
     const nextErrors: FormErrors = {};
@@ -70,8 +82,15 @@ export const AdminLogin = () => {
     <section className="flex min-h-screen items-center justify-center bg-gradient-to-b from-primary/5 via-background to-background px-4 py-12">
       <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8 shadow-lg">
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-lg font-bold text-primary-foreground">
-            IB
+          <div className="relative mx-auto mb-4 h-16 w-16 overflow-hidden rounded-2xl bg-white p-1 shadow-sm">
+            <Image
+              src="/assets/logo/impactbridge.png"
+              alt="ImpactBridge"
+              fill
+              sizes="64px"
+              className="object-contain p-1"
+              priority
+            />
           </div>
           <h1 className="text-2xl font-bold">Connexion administration</h1>
           <p className="mt-1 text-sm text-muted-foreground">

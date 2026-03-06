@@ -22,8 +22,8 @@ export const HomeHeroSection = ({ heroImage }: HomeHeroSectionProps) => {
           alt="Communautes soutenues par ImpactBridge"
           fill
           sizes="100vw"
-          unoptimized
-          className="scale-105 object-cover"
+          priority
+          className="scale-105 object-cover object-center"
         />
         <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/65 to-primary/25" />
       </div>
