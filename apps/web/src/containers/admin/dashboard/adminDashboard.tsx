@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { ContactMessage } from "@impact-bridge/shared";
 import { AdminStatCard, PublishBadge, StatusBadge } from "@/components";
 import { ROUTES } from "@/constants";
-import { useAuth, usePublicActivities } from "@/hooks";
+import { Skeleton } from "@/components/common";
+import { useAdminActivities, useAdminContacts, useAuth } from "@/hooks";
 import { useAdminAuthStore } from "@/stores";
 
 const ActivityIcon = () => (
@@ -25,32 +25,10 @@ const MailIcon = () => (
   </svg>
 );
 
-const BriefcaseIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 8h18v11H3z" />
-    <path d="M9 8V6h6v2" />
-  </svg>
-);
-
-const UsersIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-    <circle cx="9" cy="7" r="4" />
-    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-  </svg>
-);
-
 const ClockIcon = () => (
   <svg viewBox="0 0 24 24" className="h-3 w-3" fill="none" stroke="currentColor" strokeWidth="2">
     <circle cx="12" cy="12" r="9" />
     <path d="M12 7v6l4 2" />
-  </svg>
-);
-
-const ShieldIcon = () => (
-  <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M12 3 5 6v6c0 5 3.5 8 7 9 3.5-1 7-4 7-9V6z" />
   </svg>
 );
 
@@ -62,46 +40,30 @@ type RecentActivity = {
   isPublished: boolean;
 };
 
-const RECENT_MESSAGES: ContactMessage[] = [
-  {
-    id: "c-1",
-    name: "Fatima Zahra",
-    email: "fatima@example.com",
-    subject: "Demande de partenariat local",
-    message: "Nous souhaitons soutenir vos actions de terrain a Casablanca.",
-    status: "NEW",
-    createdAt: "2026-03-02T10:15:00.000Z",
-    updatedAt: "2026-03-02T10:15:00.000Z",
-  },
-  {
-    id: "c-2",
-    name: "Yassine B.",
-    email: "yassine@example.com",
-    subject: "Benevolat weekend",
-    message: "Je souhaite rejoindre l equipe benevole pour les actions du weekend.",
-    status: "READ",
-    createdAt: "2026-03-01T16:30:00.000Z",
-    updatedAt: "2026-03-01T18:00:00.000Z",
-  },
-  {
-    id: "c-3",
-    name: "Association Noor",
-    email: "contact@noor.ma",
-    subject: "Collaboration education",
-    message: "Proposition de collaboration pour un programme education numerique.",
-    status: "ARCHIVED",
-    createdAt: "2026-02-28T09:00:00.000Z",
-    updatedAt: "2026-03-01T09:00:00.000Z",
-  },
-];
-
 export const AdminDashboard = () => {
   const router = useRouter();
   const { logout, loadAdminProfile } = useAuth();
   const { admin } = useAdminAuthStore();
-  const { filteredItems: adminActivities } = usePublicActivities({
+  const activitiesQuery = useAdminActivities({
+    page: 1,
     search: "",
-    filter: "all",
+    status: "all",
+    limit: 4,
+  });
+  const publishedActivitiesQuery = useAdminActivities({
+    page: 1,
+    search: "",
+    status: "published",
+    limit: 1,
+  });
+  const recentContactsQuery = useAdminContacts({
+    page: 1,
+    limit: 3,
+  });
+  const newContactsQuery = useAdminContacts({
+    page: 1,
+    limit: 1,
+    status: "NEW",
   });
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -141,7 +103,7 @@ export const AdminDashboard = () => {
 
   const recentActivities = useMemo<RecentActivity[]>(
     () =>
-      adminActivities.slice(0, 4).map((activity) => ({
+      (activitiesQuery.data?.items ?? []).map((activity) => ({
         id: activity.id,
         title: activity.title,
         location: activity.location ?? "Lieu non precise",
@@ -150,86 +112,41 @@ export const AdminDashboard = () => {
           "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=600&fit=crop",
         isPublished: activity.isPublished,
       })),
-    [adminActivities],
+    [activitiesQuery.data?.items],
   );
 
-  const publishedCount = useMemo(
-    () => recentActivities.filter((item) => item.isPublished).length,
-    [recentActivities],
-  );
-
-  const newMessagesCount = useMemo(
-    () => RECENT_MESSAGES.filter((item) => item.status === "NEW").length,
-    [],
-  );
+  const totalActivities = activitiesQuery.data?.meta.total ?? 0;
+  const publishedCount = publishedActivitiesQuery.data?.meta.total ?? 0;
+  const recentMessages = recentContactsQuery.data?.items ?? [];
+  const totalMessages = recentContactsQuery.data?.meta.total ?? 0;
+  const newMessagesCount = newContactsQuery.data?.meta.total ?? 0;
 
   const stats = useMemo(
     () => [
       {
         label: "Activites",
-        value: recentActivities.length.toString(),
+        value: totalActivities.toString(),
         detail: `${publishedCount} publiees`,
-        trend: "+3 ce mois",
         iconColorClassName: "text-primary",
         icon: <ActivityIcon />,
       },
       {
         label: "Messages",
-        value: RECENT_MESSAGES.length.toString(),
+        value: totalMessages.toString(),
         detail: `${newMessagesCount} non lus`,
-        trend: "+2 cette semaine",
         iconColorClassName: "text-accent",
         icon: <MailIcon />,
       },
-      {
-        label: "Services",
-        value: "6",
-        detail: "actifs",
-        trend: "stable",
-        iconColorClassName: "text-secondary",
-        icon: <BriefcaseIcon />,
-      },
-      {
-        label: "Benevoles",
-        value: "312",
-        detail: "inscrits",
-        trend: "+15 ce mois",
-        iconColorClassName: "text-primary",
-        icon: <UsersIcon />,
-      },
     ],
-    [newMessagesCount, publishedCount, recentActivities.length],
+    [newMessagesCount, publishedCount, totalActivities, totalMessages],
   );
 
-  const handleLogout = async () => {
-    await logout();
-    router.replace(ROUTES.ADMIN_LOGIN);
-  };
-
   return (
-    <section className="min-h-screen bg-muted/30 px-4 py-8 md:px-6">
-      <div className="mx-auto w-full max-w-6xl space-y-8">
-        <header className="flex flex-col gap-4 rounded-2xl border border-border bg-card p-6 md:flex-row md:items-center md:justify-between">
-          <div>
-            <h1 className="font-display text-2xl font-bold md:text-3xl">Tableau de bord</h1>
-            <p className="text-sm text-muted-foreground">
-              Vue d ensemble de votre organisation. Connecte en tant que {admin?.email ?? "admin"}.
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
-              <ShieldIcon />
-              {admin?.role ?? "ADMIN"}
-            </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="inline-flex h-10 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium transition hover:bg-muted"
-            >
-              Se deconnecter
-            </button>
-          </div>
-        </header>
+    <section className="mx-auto w-full max-w-6xl space-y-8">
+      <header className="space-y-1">
+        <h1 className="font-display text-2xl font-bold md:text-3xl">Tableau de bord</h1>
+        <p className="text-sm text-muted-foreground">Vue d ensemble de votre organisation</p>
+      </header>
 
         {loading ? (
           <div className="rounded-2xl border border-border bg-card p-6 text-sm text-muted-foreground">
@@ -243,14 +160,13 @@ export const AdminDashboard = () => {
           </div>
         ) : null}
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           {stats.map((stat) => (
             <AdminStatCard
               key={stat.label}
               label={stat.label}
               value={stat.value}
               detail={stat.detail}
-              trend={stat.trend}
               iconColorClassName={stat.iconColorClassName}
               icon={stat.icon}
             />
@@ -262,7 +178,7 @@ export const AdminDashboard = () => {
             <div className="flex items-center justify-between border-b border-border p-5">
               <h2 className="font-semibold">Activites recentes</h2>
               <Link
-                href={`${ROUTES.ADMIN_DASHBOARD}/activites`}
+                href={ROUTES.ADMIN_ACTIVITIES}
                 className="text-xs font-medium text-primary transition hover:underline"
               >
                 Voir tout
@@ -294,31 +210,49 @@ export const AdminDashboard = () => {
             <div className="flex items-center justify-between border-b border-border p-5">
               <h2 className="font-semibold">Messages recents</h2>
               <Link
-                href={`${ROUTES.ADMIN_DASHBOARD}/contacts`}
+                href={ROUTES.ADMIN_CONTACTS}
                 className="text-xs font-medium text-primary transition hover:underline"
               >
                 Voir tout
               </Link>
             </div>
             <div className="divide-y divide-border">
-              {RECENT_MESSAGES.map((message) => (
-                <article key={message.id} className="p-4">
-                  <div className="mb-1 flex items-center justify-between gap-2">
-                    <p className="text-sm font-medium">{message.name}</p>
-                    <StatusBadge status={message.status} />
-                  </div>
-                  <p className="text-xs font-semibold text-foreground">{message.subject}</p>
-                  <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{message.message}</p>
-                  <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground/70">
-                    <ClockIcon />
-                    {new Date(message.createdAt).toLocaleDateString("fr-FR")}
-                  </p>
-                </article>
-              ))}
+              {recentContactsQuery.isLoading ? (
+                <div className="space-y-4 p-4">
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="space-y-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-5 w-16" />
+                      </div>
+                      <Skeleton className="h-3 w-4/5" />
+                      <Skeleton className="h-3 w-full" />
+                      <Skeleton className="h-3 w-20" />
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+              {!recentContactsQuery.isLoading && recentMessages.length === 0 ? (
+                <div className="p-6 text-sm text-muted-foreground">Aucun message recent.</div>
+              ) : null}
+              {!recentContactsQuery.isLoading &&
+                recentMessages.map((message) => (
+                  <article key={message.id} className="p-4">
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <p className="text-sm font-medium">{message.name}</p>
+                      <StatusBadge status={message.status} />
+                    </div>
+                    <p className="text-xs font-semibold text-foreground">{message.subject}</p>
+                    <p className="mt-1 line-clamp-1 text-xs text-muted-foreground">{message.message}</p>
+                    <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground/70">
+                      <ClockIcon />
+                      {new Date(message.createdAt).toLocaleDateString("fr-FR")}
+                    </p>
+                  </article>
+                ))}
             </div>
           </section>
         </div>
-      </div>
     </section>
   );
 };

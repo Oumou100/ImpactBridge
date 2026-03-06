@@ -26,9 +26,7 @@ export const Body: React.FC<BodyProps> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        const shouldHide =
-            pathname === ROUTES.ADMIN_LOGIN ||
-            pathname.startsWith(ROUTES.ADMIN_DASHBOARD);
+        const shouldHide = pathname === ROUTES.ADMIN_LOGIN;
 
         setShowHeaderFooter(!shouldHide);
     }, [pathname]);
