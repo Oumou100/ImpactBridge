@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { ZodError } from "zod";
 import { errorResponse } from "@/app/http/response";
 
 export class AppError extends Error {
@@ -20,8 +21,18 @@ export const errorHandler = (
   res: Response,
   _next: NextFunction,
 ) => {
-  const statusCode = err instanceof AppError ? err.statusCode : 500;
-  const message = statusCode === 500 ? "Internal server error" : err.message;
+  const statusCode =
+    err instanceof AppError ? err.statusCode : err instanceof ZodError ? 422 : 500;
+  const message =
+    statusCode === 500
+      ? "Internal server error"
+      : statusCode === 422
+        ? "Validation error"
+        : err.message;
+  const errors =
+    err instanceof ZodError
+      ? err.flatten().fieldErrors
+      : undefined;
 
   console.error("[API ERROR]", {
     method: req.method,
@@ -31,5 +42,5 @@ export const errorHandler = (
     stack: process.env.NODE_ENV !== "production" ? err.stack : undefined,
   });
 
-  return errorResponse(res, message, statusCode);
+  return errorResponse(res, message, statusCode, errors);
 };

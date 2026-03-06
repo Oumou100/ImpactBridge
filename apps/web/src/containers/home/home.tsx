@@ -1,4 +1,8 @@
-﻿import { useHomeContent } from "@/hooks";
+"use client";
+
+import { useMemo } from "react";
+import { useHomeContent, usePublicActivities } from "@/hooks";
+import type { ActivityItem } from "@/types";
 import {
   HomeActivitiesSection,
   HomeHeroSection,
@@ -7,14 +11,39 @@ import {
   HomeStatsSection,
 } from "./sections";
 
+const HOME_ACTIVITIES_PREVIEW_COUNT = 3;
+
+const formatActivityDate = (value?: string | null) => {
+  if (!value) {
+    return "Date non precisee";
+  }
+
+  return new Date(value).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 export const Home = () => {
-  const {
-    featuredActivities,
-    heroImage,
-    impactStats,
-    missionImage,
-    ngoServices,
-  } = useHomeContent();
+  const { heroImage, impactStats, missionImage, ngoServices } = useHomeContent();
+  const { filteredItems: publicActivities, isLoading: isActivitiesLoading } = usePublicActivities({
+    search: "",
+    filter: "all",
+  });
+
+  const featuredActivities = useMemo<ActivityItem[]>(
+    () =>
+      publicActivities.slice(0, HOME_ACTIVITIES_PREVIEW_COUNT).map((activity) => ({
+        title: activity.title,
+        description: activity.description,
+        date: formatActivityDate(activity.activityDate),
+        image:
+          activity.coverImageUrl ||
+          "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=600&fit=crop",
+      })),
+    [publicActivities],
+  );
 
   return (
     <>
@@ -22,7 +51,10 @@ export const Home = () => {
       <HomeStatsSection stats={impactStats} />
       <HomeMissionSection missionImage={missionImage} />
       <HomeServicesSection services={ngoServices} />
-      <HomeActivitiesSection activities={featuredActivities} />
+      <HomeActivitiesSection
+        activities={featuredActivities}
+        isLoading={isActivitiesLoading}
+      />
     </>
   );
 };

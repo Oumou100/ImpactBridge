@@ -7,9 +7,8 @@ import { useRouter } from "next/navigation";
 import type { ContactMessage } from "@impact-bridge/shared";
 import { AdminStatCard, PublishBadge, StatusBadge } from "@/components";
 import { ROUTES } from "@/constants";
-import { useAuth } from "@/hooks";
+import { useAuth, usePublicActivities } from "@/hooks";
 import { useAdminAuthStore } from "@/stores";
-import { activityPrograms } from "@/constants/activities";
 
 const ActivityIcon = () => (
   <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2">
@@ -100,6 +99,10 @@ export const AdminDashboard = () => {
   const router = useRouter();
   const { logout, loadAdminProfile } = useAuth();
   const { admin } = useAdminAuthStore();
+  const { filteredItems: adminActivities } = usePublicActivities({
+    search: "",
+    filter: "all",
+  });
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const hasHandledSessionExpiry = useRef(false);
@@ -138,14 +141,16 @@ export const AdminDashboard = () => {
 
   const recentActivities = useMemo<RecentActivity[]>(
     () =>
-      activityPrograms.slice(0, 4).map((program, index) => ({
-        id: `${index + 1}`,
-        title: program.title,
-        location: program.location,
-        coverImageUrl: program.image,
-        isPublished: index % 2 === 0,
+      adminActivities.slice(0, 4).map((activity) => ({
+        id: activity.id,
+        title: activity.title,
+        location: activity.location ?? "Lieu non precise",
+        coverImageUrl:
+          activity.coverImageUrl ||
+          "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=600&fit=crop",
+        isPublished: activity.isPublished,
       })),
-    [],
+    [adminActivities],
   );
 
   const publishedCount = useMemo(

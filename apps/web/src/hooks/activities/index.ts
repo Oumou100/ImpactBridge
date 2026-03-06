@@ -1,1 +1,2 @@
-export * from "./useActivitiesContent";
+export * from "./usePublicActivities";
+export * from "./usePublicActivityDetail";
