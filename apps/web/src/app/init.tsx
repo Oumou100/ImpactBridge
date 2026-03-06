@@ -8,7 +8,7 @@ export const Init = ({ children }: PropsWithChildren) => {
 
     useEffect(() => {
         init();
-    }, []);
+    }, [init]);
 
     return <>{children}</>;
 };
