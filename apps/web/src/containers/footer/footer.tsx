@@ -53,7 +53,7 @@ export const Footer = () => {
                     src="/assets/logo/impactbridge_footer.png"
                     alt="ImpactBridge"
                     fill
-                    sizes="(max-width: 640px) 180px, 210px"
+                    sizes="(max-width: 650px) 190px, 220px"
                     className="object-contain object-left"
                   />
                 </div>

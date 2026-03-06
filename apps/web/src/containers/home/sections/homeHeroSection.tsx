@@ -25,7 +25,7 @@ export const HomeHeroSection = ({ heroImage }: HomeHeroSectionProps) => {
           priority
           className="scale-105 object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/85 via-primary/65 to-primary/25" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--hero-overlay))/0.85] via-[hsl(var(--hero-overlay))/0.6] to-transparent" />
       </div>
 
       <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background to-transparent" />

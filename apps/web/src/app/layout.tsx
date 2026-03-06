@@ -1,10 +1,16 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Poppins } from "next/font/google";
-import "./globals.css";
-import { Body } from "@/containers";
 import { Suspense } from "react";
 import { GlobalLoader } from "@/components/common";
+import { Body } from "@/containers";
 import { Providers } from "./providers";
+import "./globals.css";
+
+const siteUrl = "https://impact-bridge-oumoudev.vercel.app";
+const ogImageUrl = `${siteUrl}/assets/opengraph.png`;
+const siteTitle = "ImpactBridge";
+const siteDescription =
+  "ImpactBridge est une organisation humanitaire dediee a l education, a l accompagnement social et aux actions de terrain.";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -20,18 +26,60 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "ImpactBridge - ONG Éducation & Actions",
-  description:
-    "ImpactBridge est une ONG dédiée à l'éducation et aux initiatives sociales. Découvrez nos projets et soutenez nos actions.",
-  keywords:
-    "ONG, ImpactBridge, éducation, initiatives sociales, actions communautaires, bénévolat",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: siteTitle,
+    template: `%s | ${siteTitle}`,
+  },
+  description: siteDescription,
+  applicationName: siteTitle,
+  authors: [
+    {
+      name: "OumouDev",
+      url: "https://oumou100.github.io/",
+    },
+  ],
+  creator: "OumouDev",
+  publisher: "OumouDev",
+  alternates: {
+    canonical: siteUrl,
+  },
+  keywords: [
+    "ImpactBridge",
+    "organisation humanitaire",
+    "ONG",
+    "education",
+    "actions sociales",
+    "solidarite",
+    "benevolat",
+  ],
   openGraph: {
-    title: "ImpactBridge - ONG Éducation & Actions",
-    description:
-      "ONG dédiée à l'éducation et aux initiatives sociales. Découvrez nos projets et soutenez nos actions.",
-    url: "https://impactbridge.org", // mettre le vrai domaine si dispo
-    siteName: "ImpactBridge",
+    title: siteTitle,
+    description: siteDescription,
+    url: siteUrl,
+    siteName: siteTitle,
     type: "website",
+    locale: "fr_FR",
+    images: [
+      {
+        url: ogImageUrl,
+        width: 1200,
+        height: 630,
+        alt: "ImpactBridge",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: siteDescription,
+    creator: "@OumouDev",
+    images: [ogImageUrl],
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+    apple: "/favicon.ico",
   },
 };
 
@@ -49,9 +97,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body
-        className={`${inter.variable} ${poppins.variable} font-sans antialiased`}
-      >
+      <body className={`${inter.variable} ${poppins.variable} font-sans antialiased`}>
         <Suspense>
           <Providers>
             <GlobalLoader />

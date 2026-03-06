@@ -34,10 +34,21 @@ export const useAdminAuthStore = create<AdminAuthState>((set) => ({
       isAuthenticated: Boolean(tokens?.accessToken),
     }),
   clearSession: () =>
-    set({
-      accessToken: null,
-      refreshToken: null,
-      admin: null,
-      isAuthenticated: false,
+    set((state) => {
+      if (
+        state.accessToken === null &&
+        state.refreshToken === null &&
+        state.admin === null &&
+        state.isAuthenticated === false
+      ) {
+        return state;
+      }
+
+      return {
+        accessToken: null,
+        refreshToken: null,
+        admin: null,
+        isAuthenticated: false,
+      };
     }),
 }));
