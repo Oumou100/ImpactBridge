@@ -39,4 +39,4 @@ export const missionImage =
   "https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?w=1200&h=1400&fit=crop";
 
 export const heroImage =
-  "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=2200&h=1400&fit=crop";
+  "/assets/hero-image.jpg";

@@ -1,5 +1,6 @@
-﻿import Link from "next/link";
-import { navItems } from "@/constants";
+import Image from "next/image";
+import Link from "next/link";
+import { navItems, ROUTES } from "@/constants";
 
 const engagementLinks = [
   "Faire un don",
@@ -7,23 +8,6 @@ const engagementLinks = [
   "Nos partenaires",
   "Rapport annuel",
 ];
-
-const ArrowIcon = () => {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M5 12h14" />
-      <path d="m13 6 6 6-6 6" />
-    </svg>
-  );
-};
-
-const HeartIcon = () => {
-  return (
-    <svg viewBox="0 0 24 24" className="h-3 w-3" fill="currentColor" stroke="currentColor" strokeWidth="1.5">
-      <path d="M12 20s-7-4.35-7-9.5A4.5 4.5 0 0 1 12 7a4.5 4.5 0 0 1 7 3.5C19 15.65 12 20 12 20Z" />
-    </svg>
-  );
-};
 
 const MailIcon = () => {
   return (
@@ -44,24 +28,17 @@ export const Footer = () => {
               Restez connecte a notre impact
             </h3>
             <p className="mb-8 leading-relaxed text-primary-foreground/75">
-              Recevez nos nouvelles, nos histoires d impact et nos opportunites de benevolat directement par email.
+              Une question, une proposition de partenariat ou envie de nous rejoindre ? Parlons-en.
             </p>
 
-            <form className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row" action="#" onSubmit={(event) => event.preventDefault()}>
-              <input
-                type="email"
-                required
-                placeholder="Votre adresse email"
-                className="h-12 flex-1 rounded-xl border border-primary-foreground/25 bg-primary-foreground/10 px-4 text-primary-foreground placeholder:text-primary-foreground/45 focus:outline-none focus:ring-2 focus:ring-accent/50"
-              />
-              <button
-                type="submit"
-                className="inline-flex h-12 shrink-0 items-center justify-center rounded-xl bg-accent px-6 font-semibold text-accent-foreground shadow-lg shadow-accent/20 transition-colors hover:bg-accent/90"
+            <div className="mx-auto max-w-md">
+              <Link
+                href={ROUTES.CONTACT}
+                className="inline-flex h-12 w-full items-center justify-center rounded-xl bg-accent px-6 font-semibold text-accent-foreground shadow-lg shadow-accent/20 transition-colors hover:bg-accent/90"
               >
-                S inscrire
-                <span className="ml-2 inline-flex"><ArrowIcon /></span>
-              </button>
-            </form>
+                Nous contacter
+              </Link>
+            </div>
           </div>
         </div>
       </div>
@@ -70,11 +47,19 @@ export const Footer = () => {
         <div className="mx-auto max-w-7xl px-4 py-14 md:px-6">
           <div className="grid gap-10 md:grid-cols-4">
             <div>
-              <div className="mb-4 flex items-center gap-3">
-                <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary">
-                  <span className="text-sm font-bold text-primary-foreground">IB</span>
+              <div className="mb-4">
+                <div className="relative h-20 w-[210px]">
+                  <Image
+                    src="/assets/logo/impactbridge_footer.png"
+                    alt="ImpactBridge"
+                    fill
+                    sizes="(max-width: 640px) 180px, 210px"
+                    className="object-contain object-left"
+                  />
                 </div>
-                <span className="text-lg font-bold">ImpactBridge</span>
+                <p className="mt-3 text-xs font-medium uppercase tracking-[0.2em] text-background/45">
+                  Organisation humanitaire
+                </p>
               </div>
               <p className="text-sm leading-relaxed text-background/55">
                 Ensemble, construisons des ponts vers un avenir meilleur pour les communautes les plus vulnerables.
@@ -120,10 +105,12 @@ export const Footer = () => {
               </h4>
               <div className="space-y-2.5 text-sm text-background/55">
                 <p className="flex items-center gap-2">
-                  <span className="text-accent"><MailIcon /></span>
+                  <span className="text-accent">
+                    <MailIcon />
+                  </span>
                   contact@impactbridge.org
                 </p>
-                <p>+212 6 12 34 56 78</p>
+                <p>+212 6 50 77 06 09</p>
                 <p>
                   Hay Salam
                   <br />
@@ -135,7 +122,7 @@ export const Footer = () => {
 
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-background/10 pt-8 md:flex-row">
             <p className="text-xs text-background/35">
-              © {new Date().getFullYear()} ImpactBridge. Tous droits reserves.
+              (c) {new Date().getFullYear()} ImpactBridge. Tous droits reserves.
             </p>
             <div className="flex items-center gap-1.5 text-xs text-background/35">
               <span>By</span>

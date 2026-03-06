@@ -1,5 +1,6 @@
 ﻿"use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -48,25 +49,28 @@ export const Header = () => {
     };
   }, []);
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [pathname]);
+
   return (
     <header
-      className={`sticky top-0 z-50 transition-all duration-300 ${
-        scrolled
+      className={`sticky top-0 z-50 transition-all duration-300 ${scrolled
           ? "border-b border-border/60 bg-background/80 shadow-sm backdrop-blur-xl"
           : "bg-transparent"
-      }`}
+        }`}
     >
       <div className="mx-auto flex h-[72px] w-full max-w-7xl items-center justify-between px-4 md:px-6">
-        <Link href="/" className="group flex items-center gap-3">
-          <div className="relative flex h-10 w-10 items-center justify-center rounded-xl bg-primary transition-transform group-hover:scale-105">
-            <span className="text-sm font-bold tracking-tight text-primary-foreground">IB</span>
-            <span className="absolute -right-0.5 -bottom-0.5 h-3 w-3 rounded-full border-2 border-background bg-accent" />
-          </div>
-          <div className="flex flex-col">
-            <span className="text-lg leading-none font-bold tracking-tight text-foreground">ImpactBridge</span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
-              Organisation humanitaire
-            </span>
+        <Link href="/" className="group flex items-center">
+          <div className="relative h-16 w-[180px] transition-transform group-hover:scale-[1.02] sm:h-18 sm:w-[210px]">
+            <Image
+              src="/assets/logo/impactbridge.png"
+              alt="ImpactBridge"
+              fill
+              sizes="(max-width: 640px) 180px, 210px"
+              className="object-contain object-left"
+              priority
+            />
           </div>
         </Link>
 
@@ -90,9 +94,8 @@ export const Header = () => {
                   {item.label}
                 </span>
                 <span
-                  className={`absolute right-2 bottom-0 left-2 h-0.5 rounded-full bg-primary transition-opacity duration-200 ${
-                    isActive ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute right-2 bottom-0 left-2 h-0.5 rounded-full bg-primary transition-opacity duration-200 ${isActive ? "opacity-100" : "opacity-0"
+                    }`}
                 />
               </Link>
             );
@@ -123,11 +126,7 @@ export const Header = () => {
           aria-expanded={isOpen}
           aria-controls="mobile-nav"
         >
-          <span
-            className={`block transition-all duration-200 ${
-              isOpen ? "rotate-0 opacity-100" : "rotate-90 opacity-0"
-            }`}
-          >
+          <span className="block transition-transform duration-200">
             {isOpen ? <CloseIcon /> : <MenuIcon />}
           </span>
         </button>
@@ -135,9 +134,8 @@ export const Header = () => {
 
       <nav
         id="mobile-nav"
-        className={`overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-xl transition-all duration-300 md:hidden ${
-          isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
+        className={`overflow-hidden border-t border-border/60 bg-background/95 backdrop-blur-xl transition-all duration-300 md:hidden ${isOpen ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+          }`}
       >
         <div className="space-y-1 px-4 py-4">
           {navItems.map((item) => {
@@ -148,11 +146,10 @@ export const Header = () => {
                 key={item.href}
                 href={item.href}
                 onClick={() => setIsOpen(false)}
-                className={`block rounded-xl px-4 py-3 text-sm font-medium transition-colors ${
-                  isActive
+                className={`block rounded-xl px-4 py-3 text-sm font-medium transition-colors ${isActive
                     ? "bg-primary/5 font-semibold text-primary"
                     : "text-muted-foreground hover:bg-muted"
-                }`}
+                  }`}
               >
                 {item.label}
               </Link>
