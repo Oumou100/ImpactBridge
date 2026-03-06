@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { ContactMessageStatus } from "@impact-bridge/shared";
+import { ContactDetailSkeleton, ContactListSkeleton } from "@/components/common";
 import { useAdminContacts, useAdminContactStatus } from "@/hooks";
 import { ContactDetailPanel } from "./contactDetailPanel";
 import { ContactsListPanel } from "./contactsListPanel";
@@ -123,8 +124,9 @@ export const AdminContacts = () => {
       ) : null}
 
       {isLoading ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
-          Chargement des messages...
+        <div className="grid gap-6 lg:grid-cols-5">
+          <ContactListSkeleton />
+          <ContactDetailSkeleton />
         </div>
       ) : null}
 

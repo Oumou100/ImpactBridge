@@ -9,6 +9,7 @@ import {
   ActivityPaginationControls,
   ActivitySearchBar,
 } from "@/components";
+import { ActivityListSkeleton } from "@/components/common";
 import { PublicActivitiesHeroSection } from "./sections/publicActivitiesHeroSection";
 
 const ITEMS_PER_PAGE = 6;
@@ -53,9 +54,7 @@ export const Activities = () => {
           </div>
 
           {isLoading ? (
-            <div className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
-              Chargement des activites...
-            </div>
+            <ActivityListSkeleton />
           ) : null}
 
           {isError ? (

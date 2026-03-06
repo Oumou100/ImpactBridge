@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { type FormEvent, useMemo, useState } from "react";
 import { PublishBadge } from "@/components";
+import { AdminActivitiesTableSkeleton } from "@/components/common";
 import { ROUTES } from "@/constants";
 import { useAdminActivities, useAdminActivityMutations, type AdminActivityStatusFilter } from "@/hooks";
 
@@ -133,9 +134,7 @@ export const AdminActivities = () => {
       ) : null}
 
       {isLoading ? (
-        <div className="rounded-xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
-          Chargement des activites...
-        </div>
+        <AdminActivitiesTableSkeleton />
       ) : null}
 
       {isError ? (
