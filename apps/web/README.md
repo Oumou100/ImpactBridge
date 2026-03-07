@@ -1,36 +1,59 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ImpactBridge Web
 
-## Getting Started
+Application Next.js pour la partie front-end de la plateforme ImpactBridge.
 
-First, run the development server:
+Elle comprend :
+- le site public
+- la liste des activités et la page détail
+- les pages services et contact
+- l interface d administration connectée à l API backend
+
+## Stack technique
+
+- Next.js App Router
+- TypeScript
+- Tailwind CSS
+- React Query
+- Zustand
+
+## Variables d environnement
+
+Créer `apps/web/.env.local` avec :
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+NEXT_PUBLIC_API_BASE_URL=http://localhost:4000/v1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+En production, utiliser l URL publique de l API.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Lancer en local
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Depuis la racine du dépôt :
 
-## Learn More
+```bash
+pnpm --filter impact-bridge-web dev
+```
 
-To learn more about Next.js, take a look at the following resources:
+L application sera disponible sur :
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+`http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Build
 
-## Deploy on Vercel
+```bash
+pnpm --filter impact-bridge-web build
+pnpm --filter impact-bridge-web start
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Parties principales
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Pages publiques : accueil, activités, services, contact
+- Pages admin : connexion, tableau de bord, gestion des activités, gestion des messages
+- Métadonnées SEO et Open Graph
+- Interface responsive desktop et mobile
+
+## Notes
+
+- Les routes admin dépendent de l API backend et d une session valide.
+- Les activités visibles sur le site public sont filtrées selon leur statut de publication.
+- Le front-end consomme les types partagés définis dans `packages/shared`.
