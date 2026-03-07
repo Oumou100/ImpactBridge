@@ -68,7 +68,7 @@ export const AdminLogin = () => {
           ? redirectTarget
           : ROUTES.ADMIN_DASHBOARD;
 
-      router.replace(safeTarget);
+      window.location.assign(safeTarget);
     } catch (error) {
       setErrorMessage(
         error instanceof Error ? error.message : "Echec de connexion. Veuillez reessayer.",

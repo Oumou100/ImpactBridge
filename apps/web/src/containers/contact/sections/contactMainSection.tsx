@@ -67,7 +67,7 @@ export const ContactMainSection = () => {
                 id="name"
                 label="Nom complet"
                 value={values.name}
-                placeholder="Jean Dupont"
+                placeholder="Votre nom"
                 autoComplete="name"
                 error={errors.name}
                 onChange={(value) => updateField("name", value)}
@@ -77,7 +77,7 @@ export const ContactMainSection = () => {
                 type="email"
                 label="Email"
                 value={values.email}
-                placeholder="jean@example.com"
+                placeholder="votre@email.com"
                 autoComplete="email"
                 error={errors.email}
                 onChange={(value) => updateField("email", value)}

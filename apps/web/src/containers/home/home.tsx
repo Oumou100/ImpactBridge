@@ -35,6 +35,7 @@ export const Home = () => {
   const featuredActivities = useMemo<ActivityItem[]>(
     () =>
       publicActivities.slice(0, HOME_ACTIVITIES_PREVIEW_COUNT).map((activity) => ({
+        slug: activity.slug,
         title: activity.title,
         description: activity.description,
         date: formatActivityDate(activity.activityDate),

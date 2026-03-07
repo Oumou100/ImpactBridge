@@ -17,7 +17,8 @@ type BodyProps = React.PropsWithChildren;
 
 export const Body: React.FC<BodyProps> = ({ children }) => {
     const pathname = usePathname();
-    const [showHeaderFooter, setShowHeaderFooter] = useState(true);
+    const [showHeader, setShowHeader] = useState(true);
+    const [showFooter, setShowFooter] = useState(true);
     const [isClient, setIsClient] = useState(false);
     const mainRef = useRef<HTMLElement>(null);
 
@@ -26,9 +27,11 @@ export const Body: React.FC<BodyProps> = ({ children }) => {
     }, []);
 
     useEffect(() => {
-        const shouldHide = pathname === ROUTES.ADMIN_LOGIN;
+        const isAdminRoute = pathname.startsWith(ROUTES.ADMIN_DASHBOARD);
+        const isAdminLogin = pathname === ROUTES.ADMIN_LOGIN;
 
-        setShowHeaderFooter(!shouldHide);
+        setShowHeader(!isAdminLogin);
+        setShowFooter(!isAdminRoute && !isAdminLogin);
     }, [pathname]);
 
     if (!isClient)
@@ -40,9 +43,9 @@ export const Body: React.FC<BodyProps> = ({ children }) => {
 
     return (
         <>
-            {showHeaderFooter && <Header />}
+            {showHeader && <Header />}
             <Main ref={mainRef}>{children}</Main>
-            {showHeaderFooter && <Footer />}
+            {showFooter && <Footer />}
         </>
     );
 };

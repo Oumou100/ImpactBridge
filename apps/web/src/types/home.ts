@@ -17,6 +17,7 @@ export type ServiceItem = {
 };
 
 export type ActivityItem = {
+  slug: string;
   title: string;
   description: string;
   date: string;

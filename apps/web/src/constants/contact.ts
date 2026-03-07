@@ -22,7 +22,7 @@ export const contactInfoItems: ContactInfoItem[] = [
   {
     icon: "mail",
     label: "Email",
-    value: "contact@impactbridge.org",
+    value: "impact.bridge.od@gmail.com",
   },
   {
     icon: "clock",

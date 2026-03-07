@@ -108,7 +108,7 @@ export const Footer = () => {
                   <span className="text-accent">
                     <MailIcon />
                   </span>
-                  contact@impactbridge.org
+                  impact.bridge.od@gmail.com
                 </p>
                 <p>+212 6 50 77 06 09</p>
                 <p>

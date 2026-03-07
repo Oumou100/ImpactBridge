@@ -7,7 +7,7 @@ type HomeMissionSectionProps = {
 
 export const HomeMissionSection = ({ missionImage }: HomeMissionSectionProps) => {
   return (
-    <section className="bg-card py-24 md:py-28">
+    <section className="bg-card py-14 md:py-18">
       <div className="mx-auto grid max-w-7xl items-center gap-12 px-4 md:grid-cols-2 md:px-6">
         <div>
           <div className="mb-4 flex items-center gap-2">

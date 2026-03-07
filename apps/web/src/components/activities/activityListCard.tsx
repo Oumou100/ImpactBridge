@@ -20,7 +20,7 @@ export const ActivityListCard = ({ activity }: ActivityListCardProps) => {
   const formattedDate = formatDate(activity.activityDate);
 
   return (
-    <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-lg">
+    <article className="overflow-hidden rounded-2xl border border-border bg-card transition hover:-translate-y-0.5 hover:shadow-md">
       <Link href={`${ROUTES.ACTIVITIES}/${activity.slug}`} className="block">
         <div className="relative h-48 w-full">
           <Image

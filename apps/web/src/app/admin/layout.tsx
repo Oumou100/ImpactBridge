@@ -74,6 +74,8 @@ export default function AdminLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();
+  const isLoginRoute = pathname === ROUTES.ADMIN_LOGIN;
+
   const [sidebarOpen, setSidebarOpen] = useState<boolean>(() => {
     if (typeof window === "undefined") {
       return true;
@@ -91,6 +93,10 @@ export default function AdminLayout({ children }: PropsWithChildren) {
     await logout();
     router.replace(ROUTES.ADMIN_LOGIN);
   };
+
+  if (isLoginRoute) {
+    return <>{children}</>;
+  }
 
   return (
     <div className="flex min-h-screen">
@@ -167,6 +173,14 @@ export default function AdminLayout({ children }: PropsWithChildren) {
               </Link>
             );
           })}
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="flex flex-col items-center gap-1 px-3 py-1.5 text-xs text-muted-foreground transition hover:text-destructive"
+          >
+            <LogoutIcon />
+            Deconnexion
+          </button>
         </div>
       </div>
 

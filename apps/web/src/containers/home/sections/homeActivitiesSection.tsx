@@ -11,7 +11,7 @@ export const HomeActivitiesSection = ({
   isLoading = false,
 }: HomeActivitiesSectionProps) => {
   return (
-    <section className="bg-card py-24 md:py-28">
+    <section className="bg-card py-14 md:py-18">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <SectionHeading
           label="Sur le terrain"

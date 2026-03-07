@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import { usePublicActivityDetail } from "@/hooks";
 import { ActivityDetailMeta, ActivityEmptyState } from "@/components";
+import { Spinner } from "@/components/common";
 import { ROUTES } from "@/constants";
 
 type ActivityDetailProps = {
@@ -29,6 +30,7 @@ export const ActivityDetail = ({ slug }: ActivityDetailProps) => {
     return (
       <section className="mx-auto w-full max-w-4xl px-4 py-16 md:px-6">
         <div className="rounded-2xl border border-border bg-card px-6 py-12 text-center text-sm text-muted-foreground">
+          <Spinner className="mb-4 h-16 w-16" size={48} />
           Chargement de l activite...
         </div>
       </section>
@@ -64,12 +66,12 @@ export const ActivityDetail = ({ slug }: ActivityDetailProps) => {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/40 to-transparent" />
         <div className="absolute inset-x-0 bottom-0 p-6 md:p-10">
           <div className="mx-auto w-full max-w-7xl">
-            <Link
-              href={ROUTES.ACTIVITIES}
-              className="inline-flex items-center rounded-lg border border-border bg-background/85 px-4 py-2 text-sm font-medium backdrop-blur-sm transition hover:bg-background"
-            >
-              Retour aux activites
-            </Link>
+          <Link
+            href={ROUTES.ACTIVITIES}
+            className="inline-flex items-center rounded-lg border border-border bg-background/85 px-4 py-2 text-sm font-medium text-foreground backdrop-blur-sm transition hover:bg-background/90 hover:text-foreground"
+          >
+            Retour aux activites
+          </Link>
           </div>
         </div>
       </section>
@@ -95,7 +97,7 @@ export const ActivityDetail = ({ slug }: ActivityDetailProps) => {
           <div className="mt-12 border-t border-border pt-8">
             <Link
               href={ROUTES.ACTIVITIES}
-              className="inline-flex items-center rounded-lg border border-border px-4 py-2 text-sm font-medium transition hover:bg-muted"
+              className="inline-flex items-center rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition hover:bg-muted hover:text-foreground"
             >
               Toutes les activites
             </Link>

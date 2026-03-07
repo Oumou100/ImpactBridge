@@ -4,6 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Cookies from "js-cookie";
+import { authCookieKeys } from "@/api";
 import { AdminStatCard, PublishBadge, StatusBadge } from "@/components";
 import { ROUTES } from "@/constants";
 import { Skeleton } from "@/components/common";
@@ -43,7 +45,7 @@ type RecentActivity = {
 export const AdminDashboard = () => {
   const router = useRouter();
   const { logout, loadAdminProfile } = useAuth();
-  const { admin } = useAdminAuthStore();
+  const { admin, accessToken } = useAdminAuthStore();
   const activitiesQuery = useAdminActivities({
     page: 1,
     search: "",
@@ -70,6 +72,13 @@ export const AdminDashboard = () => {
   const hasHandledSessionExpiry = useRef(false);
 
   useEffect(() => {
+    const activeAccessToken = accessToken ?? Cookies.get(authCookieKeys.access);
+
+    if (!activeAccessToken) {
+      setLoading(false);
+      return;
+    }
+
     if (admin) {
       setLoading(false);
       return;
@@ -99,7 +108,7 @@ export const AdminDashboard = () => {
     };
 
     void load();
-  }, [admin, loadAdminProfile, logout, router]);
+  }, [accessToken, admin, loadAdminProfile, logout, router]);
 
   const recentActivities = useMemo<RecentActivity[]>(
     () =>
