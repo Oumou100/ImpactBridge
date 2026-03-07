@@ -10,7 +10,8 @@ const siteUrl = "https://impact-bridge-oumoudev.vercel.app";
 const ogImageUrl = `${siteUrl}/assets/opengraph.png`;
 const siteTitle = "ImpactBridge";
 const siteDescription =
-  "ImpactBridge est une organisation humanitaire dediee a l education, a l accompagnement social et aux actions de terrain.";
+  "ImpactBridge est une organisation humanitaire engagee dans l education, l accompagnement social et les actions solidaires de terrain.";
+const defaultPageTitle = "ImpactBridge | Organisation humanitaire et actions solidaires";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -28,7 +29,7 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: siteTitle,
+    default: defaultPageTitle,
     template: `%s | ${siteTitle}`,
   },
   description: siteDescription,
@@ -49,12 +50,16 @@ export const metadata: Metadata = {
     "organisation humanitaire",
     "ONG",
     "education",
-    "actions sociales",
     "solidarite",
     "benevolat",
+    "actions solidaires",
+    "accompagnement social",
+    "partenariat associatif",
+    "aide communautaire",
   ],
+  category: "nonprofit",
   openGraph: {
-    title: siteTitle,
+    title: defaultPageTitle,
     description: siteDescription,
     url: siteUrl,
     siteName: siteTitle,
@@ -71,7 +76,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: siteTitle,
+    title: defaultPageTitle,
     description: siteDescription,
     creator: "@OumouDev",
     images: [ogImageUrl],

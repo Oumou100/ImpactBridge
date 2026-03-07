@@ -97,7 +97,7 @@ export const AdminDashboard = () => {
         ) {
           hasHandledSessionExpiry.current = true;
           await logout();
-          router.replace(ROUTES.ADMIN_LOGIN);
+          window.location.assign(ROUTES.ADMIN_LOGIN);
           return;
         }
 

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { PropsWithChildren, ReactNode } from "react";
 import { ROUTES } from "@/constants";
@@ -72,7 +72,6 @@ const isActiveRoute = (pathname: string, route: string) =>
 
 export default function AdminLayout({ children }: PropsWithChildren) {
   const pathname = usePathname();
-  const router = useRouter();
   const { logout } = useAuth();
   const isLoginRoute = pathname === ROUTES.ADMIN_LOGIN;
 
@@ -91,7 +90,7 @@ export default function AdminLayout({ children }: PropsWithChildren) {
 
   const handleLogout = async () => {
     await logout();
-    router.replace(ROUTES.ADMIN_LOGIN);
+    window.location.assign(ROUTES.ADMIN_LOGIN);
   };
 
   if (isLoginRoute) {

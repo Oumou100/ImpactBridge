@@ -9,7 +9,7 @@ export const swaggerSpec = swaggerJsdoc({
       version: "1.0.0",
       description: "Authentication, activities and contacts endpoints documentation for ImpactBridge API",
     },
-    servers: [{ url: `http://localhost:${env.PORT}${env.API_PREFIX}` }],
+    servers: [{ url: `https://api-impact-bridge-oumoudev.vercel.app/${env.API_PREFIX}` }],
     components: {
       securitySchemes: {
         bearerAuth: {
